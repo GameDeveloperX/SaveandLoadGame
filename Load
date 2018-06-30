@@ -1,0 +1,99 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System.IO;
+using System.Xml.Serialization;
+
+public class SaveandReadGame
+{
+    //二进制方法存档
+    public void  SaveByBin()
+    {
+        //此类已被相关方法填充
+        Save save = new Save();
+        string path = "文件目录" + "/文件名";
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream filestram = File.Create(path);
+        bf.Serialize(filestram, save);
+        File.Close();
+    }
+    //二进制方法读档
+    public Save ReadByBin()
+    {
+        //此类可忽略是否填充
+        Save save = new Save();
+        string path = "文件目录" + "/文件名";
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream fs = File.Open(path, FileMode.Open);
+        save =(Save) fs.Deserialize(fs);
+        return save;
+    }
+
+    public void SetGameByData()
+    {
+        Save save = ReadByBin();
+        //根据读档获得的对象，对游戏状态进行设置
+
+    }
+
+    /*********************************************************************/
+	
+    public void SaveByJson()
+    {
+        //此类已被相关方法填充
+        Save save = new Save();
+        string path = "文件目录" + "/文件名";  // （*.json）
+        //将对象数据解析到字符串中
+        string jsonStream = JsonMapper.ToJson(save);
+        //创建流文件
+        StreamWriter sw = new StreamWriter(path);
+        //将字符串的数据写进流文件中
+        sw.Write(jsonStream);
+        sw.Close();
+
+        ///Tips: 需注意 JsonData jsondata =JsonMapper.ToJson(save); 此代码可将json文件转换成相应的数组予以储存
+        ///此外 对于枚举类型的处理： (类型)System.Enum.Pares(Typeof(类型),string); 类型为相应的枚举类型
+        ///上述方法将string 转换成枚举类型的值
+    }
+
+    public Save LoadByJson()
+    {
+        //此类已被相关方法填充
+        Save save = new Save();
+        string path = "文件目录" + "/文件名";  // （*.json）
+        if(File.Exists(path))
+        {
+            //打开流文件
+            StreamReader sr = new StreamReader(path);
+            //将流文件读取到字符串中
+            string streamFile = sr.ReadToEnd();
+
+            sr.Close();
+
+            save = JsonMapper.ToObject<Save>(streamFile);
+        }
+
+        return save;
+    }
+    /****************************************************************/
+
+    public void SaveByXml()
+    {
+        string path = "文件目录" + "/文件名";
+        FileStream file = File.Create(path);
+
+        XmlSerializer xs = new XmlSerializer(typeof(Save));
+        xs.Serialize(file, typeof(Save));
+        file.Close();
+    }
+
+    public Save LoadByXml()
+    {
+        string path = "文件目录" + "/文件名";
+        FileStream file = File.Open(path, FileMode.Open);
+        XmlSerializer xs = new XmlSerializer(typeof(Save));
+        Save save = (Save)xs.Deserialize(file);
+        file.Close();
+        return save;
+    }
+}
