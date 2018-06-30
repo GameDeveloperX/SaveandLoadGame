@@ -1,0 +1,10 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+[System.Serializable]
+public class Save {
+
+	//游戏中需要对相关信息的属性罗列
+
+
+}
